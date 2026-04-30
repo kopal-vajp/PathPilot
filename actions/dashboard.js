@@ -109,3 +109,22 @@ export async function regenerateIndustryInsights() {
 
   return industryInsight;
 }
+
+export async function deleteIndustryInsights() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  // Remove the industry from the user, which will redirect them to onboarding
+  await db.user.update({
+    where: { clerkUserId: userId },
+    data: { industry: null },
+  });
+
+  return { success: true };
+}
