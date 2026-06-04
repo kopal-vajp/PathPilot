@@ -1,85 +1,223 @@
 # PathPilot
 
-PathPilot is an AI career assistant I built to help students figure out what to do with their careers. It combines resume building, cover letters, and interview prep in one place.
+PathPilot is an AI-powered career assistant designed to help students and job seekers streamline their career preparation journey. It combines resume building, AI-generated cover letters, interview preparation, industry insights, and skill gap analysis into a single platform.
 
-## Why I built this
+🌐 **Live Demo:** https://pathpilot-vert.vercel.app/
 
-Applying for jobs as a student is pretty stressful. I found myself jumping between different tools to write my resume, generate cover letters, and search for interview questions. I wanted to build something that put all of this into a single platform. It was also a good excuse for me to learn Next.js and how to work with the Gemini API.
+## Overview
+
+Finding internships and jobs often requires using multiple tools for resumes, cover letters, interview preparation, and industry research. PathPilot brings all of these features together in one place while providing personalized recommendations powered by AI.
+
+This project was built to explore modern full-stack development using Next.js, Clerk Authentication, Prisma, Neon PostgreSQL, and Google's Gemini API.
+
+---
 
 ## Features
 
-- Resume Builder: A markdown-based editor where you can write and save your resume. It has an AI button to help improve your phrasing.
-- Cover Letter Generator: You paste in a job description and it writes a tailored cover letter for that specific role.
-- Interview Prep: Generates a short quiz with role-based questions to test your knowledge before an interview.
-- Industry Insights: A dashboard that shows current trends, growth rates, and demand levels for your specific industry.
-- Skill Gap Analysis: A basic feature that compares your current skills with what the industry is asking for so you know what to learn next.
+### Resume Builder
+- Markdown-based resume editor
+- Save resumes to the database
+- AI-powered resume improvement suggestions
+- Persistent resume storage
 
-## How it works
+### AI Cover Letter Generator
+- Generate tailored cover letters from job descriptions
+- Personalized content based on user profile and career interests
+- Fast AI-powered content generation using Gemini
 
-When you sign up, you enter your basic details and the industry you want to work in. The app uses the Gemini API to pull current data about that industry. From there, you can navigate to different tools. For example, if you go to the resume builder, it saves your progress to a Postgres database so you can come back to it later. The interview quiz generates questions based on your profile and tracks how many you get right.
+### Interview Preparation
+- Role-specific interview quizzes
+- Multiple-choice questions generated dynamically
+- Score tracking and performance feedback
+
+### Industry Insights Dashboard
+- Industry growth trends
+- Demand analysis
+- Salary and market outlook information
+- AI-generated career insights
+
+### Skill Gap Analysis
+- Compare current skills against industry expectations
+- Identify missing skills
+- Receive learning recommendations
+
+### User Onboarding
+- Personalized profile creation
+- Industry and career preference collection
+- Customized recommendations across the platform
+
+---
+
+## Live Application
+
+Production Deployment:
+
+https://pathpilot-vert.vercel.app/
+
+---
 
 ## Tech Stack
 
-- Next.js (App Router)
-- Prisma
-- Neon PostgreSQL
-- Clerk (for auth)
-- Google Gemini API
+### Frontend
+- Next.js 15 (App Router)
+- React
 - Tailwind CSS
+- Shadcn/UI
+
+### Backend
+- Next.js Server Actions
+- Prisma ORM
+- Neon PostgreSQL
+
+### Authentication
+- Clerk Authentication
+
+### AI Integration
+- Google Gemini API
+
+### Deployment
+- Vercel
+
+---
+
+## Project Architecture
+
+```text
+User
+  ↓
+Clerk Authentication
+  ↓
+Next.js App Router
+  ↓
+Server Actions
+  ↓
+Prisma ORM
+  ↓
+Neon PostgreSQL
+
+AI Features
+  ↓
+Google Gemini API
+```
+
+---
 
 ## Setup Instructions
 
-If you want to run this locally, follow these steps:
+### 1. Clone the Repository
 
-1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/pathpilot.git
-cd pathpilot
+git clone https://github.com/kopal-vajp/PathPilot.git
+cd PathPilot
 ```
 
-2. Install dependencies
+### 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
-3. Set up environment variables
-Create a `.env` file in the root folder and add your keys. You will need keys for Clerk, a Neon database URL, and a Gemini API key.
+### 3. Configure Environment Variables
 
-```
+Create a `.env` file in the root directory:
+
+```env
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_key
 CLERK_SECRET_KEY=your_secret
+
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+
 NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/onboarding
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
-DATABASE_URL=your_postgres_url
-GEMINI_API_KEY=your_gemini_key
+
+DATABASE_URL=your_neon_database_url
+
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-4. Set up the database
+### 4. Initialize the Database
+
 ```bash
 npx prisma generate
 npx prisma db push
 ```
 
-5. Run the dev server
+### 5. Start Development Server
+
 ```bash
 npm run dev
 ```
 
-## Challenges faced
+Application will be available at:
 
-I ran into a lot of issues while building this. Setting up Clerk with Next.js App Router was confusing at first because of how server components handle auth. I also had problems with Prisma connections dropping when the server restarted during development, which I had to fix by setting up a global Prisma client.
+```text
+http://localhost:3000
+```
 
-Working with the Gemini API was tricky because it does not always return JSON exactly how you ask for it. I had to write a retry wrapper and clean up the text output before parsing it to prevent the app from crashing. Also, exporting the markdown resume to a PDF was causing crashes when image tags had empty source attributes, which took me a while to debug.
+---
 
-## What I learned
+## Challenges Faced
 
-This project taught me a lot about handling state in Next.js and when to use server versus client components. I got much better at writing robust API calls that expect things to fail. I also learned how to use Neon for serverless Postgres, which was much easier to set up than I expected.
+### Authentication with Server Components
 
-## Future improvements
+Integrating Clerk Authentication with the Next.js App Router required understanding how authentication behaves in Server Components and handling protected routes correctly.
 
-- Add a way to export the resume directly to PDF without formatting issues
-- Make the skill gap analysis more detailed
-- Let users save multiple versions of their resume for different jobs
-- Add a history page to save past cover letters
+### Database Management
+
+Managing Prisma connections during development caused connection issues due to frequent hot reloads. This was resolved by implementing a singleton Prisma client.
+
+### Gemini API Responses
+
+AI responses were occasionally inconsistent in format. Additional validation and parsing logic were added to improve reliability and prevent runtime failures.
+
+### Resume Export Handling
+
+Rendering markdown content while handling malformed image tags and edge cases required additional validation to avoid application crashes.
+
+---
+
+## What I Learned
+
+- Building full-stack applications using Next.js App Router
+- Working with Server Components and Server Actions
+- Authentication using Clerk
+- Database management with Prisma and Neon PostgreSQL
+- AI integration using Google's Gemini API
+- Production deployment using Vercel
+- Error handling and defensive programming practices
+
+---
+
+## Future Improvements
+
+- Resume PDF export with improved formatting
+- Multiple resume versions for different job roles
+- Resume templates and themes
+- Cover letter history and management
+- More advanced skill gap analysis
+- Personalized learning roadmaps
+- Interview analytics dashboard
+- Application tracking system
+
+---
+
+## Screenshots
+
+_Add screenshots of the dashboard, resume builder, cover letter generator, and interview preparation module here._
+
+---
+
+## Author
+
+**Kopal Vajpayee**
+
+Computer Science Engineering Student
+
+GitHub: https://github.com/kopal-vajp
+
+---
+
+## License
+
+This project is intended for educational and portfolio purposes.
